@@ -10,6 +10,6 @@ return {
     vim.keymap.set("n", "<leader>B", function() ui.toggle_quick_menu() end)
 
     vim.keymap.set("n", "<leader>j", function() ui.nav_next() end)
-    vim.keymap.set("n", "<leader>J", function() ui.nav_prev() end)
+    vim.keymap.set("n", "<leader>k", function() ui.nav_prev() end)
   end
 }
