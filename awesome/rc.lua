@@ -194,7 +194,70 @@ awful.screen.connect_for_each_screen(function(s)
     buttons = tasklist_buttons
   }
 
-  s.padding = { top = 23, bottom = 23 }
+  -- Create the wibox
+    s.mywibox = awful.wibar({ position = "top", screen = s })
+
+
+    --Volume widget
+    local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+
+    --Battery widget
+    local battery_widget = require("awesome-wm-widgets.battery-widget.battery")
+
+    --Brightness
+    local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
+
+    --RAM widget
+    local ram_widget = require("awesome-wm-widgets.ram-widget.ram-widget")
+
+    --Network widget
+    local net_widgets = require("net_widgets")
+    net_wireless = net_widgets.wireless({
+	    interface="wlp2s0",
+	    popup_signal=true,
+	    onclick = terminal .. " -e nmtui",
+    })
+
+    -- Add widgets to the wibox
+    s.mywibox:setup {
+        layout = wibox.layout.align.horizontal,
+        { -- Left widgets
+            layout = wibox.layout.fixed.horizontal,
+            mylauncher,
+            s.mytaglist,
+            s.mypromptbox,
+        },
+        s.mytasklist, -- Middle widget
+        { -- Right widgets
+            layout = wibox.layout.fixed.horizontal,
+            --mykeyboardlayout,
+	    ram_widget(),
+	    brightness_widget{
+		    type = 'arc',
+		    program = 'xbacklight',
+		    percentage = true,
+		    path_to_icon = '/usr/share/icons/Arc/status/symbolic/display-brightness-symbolic.svg',
+		    timeout = 5,
+		    step = 2,        
+		    rmb_set_max = false,
+	    },
+	    volume_widget{
+	    	card = 0,
+		device = 'default',
+		widget_type = 'arc'
+	    },
+            wibox.widget.systray(),
+            mytextclock,
+	    net_wireless,
+	    battery_widget{
+		show_current_level = true,
+		margin_right = 5,
+		margin_left = 5,
+
+	    },
+        },
+    }
+  s.padding = { top = 5, bottom = 5 }
 end)
 -- }}}
 
@@ -207,6 +270,8 @@ root.buttons(gears.table.join(
 -- }}}
 
 -- {{{ Key bindings
+local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
+local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 globalkeys = gears.table.join(
   awful.key({ modkey, }, "s", hotkeys_popup.show_help,
     { description = "show help", group = "awesome" }),
@@ -288,6 +353,14 @@ globalkeys = gears.table.join(
     end,
     { description = "restore minimized", group = "client" }),
 
+  -- Brigthness
+  awful.key({}, "XF86MonBrightnessUp", function () brightness_widget:inc() end, {description = "increase brightness", group = "custom"}),
+  awful.key({}, "XF86MonBrightnessDown", function () brightness_widget:dec() end, {description = "decrease brightness", group = "custom"}),
+
+  --Volume
+  awful.key({}, "XF86AudioRaiseVolume", function() volume_widget:inc(5) end),
+  awful.key({}, "XF86AudioLowerVolume", function() volume_widget:dec(5) end),
+  awful.key({}, "XF86AudioMute", function() volume_widget:toggle() end),
   -- Prompt
   awful.key({ modkey }, "r", function() awful.screen.focused().mypromptbox:run() end,
     { description = "run prompt", group = "launcher" }),
@@ -562,4 +635,5 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 --
 
 --AUTOSTART
-awful.spawn.with_shell("~/.config/polybar/launch.sh --cuts & ~/scripts/startup.sh")
+-- awful.spawn.with_shell("~/.config/polybar/launch.sh --cuts & ~/scripts/startup.sh")
+awful.spawn.with_shell("~/scripts/startup.sh")
