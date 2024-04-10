@@ -1,5 +1,0 @@
-require("juank.config.telescope")
-require("juank.config.treesitter")
-require("juank.config.lsp")
-require("juank.config.whichkey")
-require("juank.config.cmp")
