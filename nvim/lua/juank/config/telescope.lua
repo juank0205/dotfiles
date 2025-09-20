@@ -70,4 +70,3 @@ vim.keymap.set('n', '<leader>sg', telescope.live_grep, { desc = '[S]earch by [G]
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', function() vim.cmd("Telescope diagnostics severity_bound=ERROR") end, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sc', telescope.colorscheme, { desc = '[S]earch [D]iagnostics' })
-
